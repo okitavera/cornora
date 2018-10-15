@@ -1,4 +1,5 @@
 # general things to ignore
+.vscode
 build/
 dist/
 *.egg-info/
