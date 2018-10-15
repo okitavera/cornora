@@ -38,11 +38,10 @@ then install via this command:
 
 Example
 
-```
       $ cornora --tl "skippy-xd"
       # or with multi conditions
       $ cornora --tl "skippy-xd" --tr "rofi -show run"      
-```
+
       
 ## License
 
