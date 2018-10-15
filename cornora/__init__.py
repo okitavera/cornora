@@ -14,15 +14,13 @@ usage:
 
    -h  --help         show help docs
 """
-
-import sys
-import getopt
-import subprocess
 from os import kill
-from signal import SIGKILL
-from sys import exit
 from time import sleep
 from Xlib import display
+from getopt import getopt
+from signal import SIGKILL
+from sys import argv, exit
+from subprocess import PIPE, Popen
 
 screen = display.Display().screen()
 maxW = screen.width_in_pixels-1
@@ -30,7 +28,7 @@ maxH = screen.height_in_pixels-1
 
 Pass = True
 try:
-    opts, args = getopt.getopt(sys.argv[1:], 'h', ['tl=', 'tr=', 'bl=', 'br=', 'help='])
+    opts, args = getopt(argv[1:], 'h', ['tl=', 'tr=', 'bl=', 'br=', 'help='])
     for opt, arg in opts:
         Pass = True
         if opt == '--tl':
@@ -57,7 +55,7 @@ class Service:
         return data["root_x"] == maxW and data["root_y"] == maxH
     def executor(self,process):
         if self.subpid == 0:
-            out = subprocess.Popen(process.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            out = Popen(process.split(), stdout=PIPE, stderr=PIPE)
             self.subpid = out.pid
         else:
             kill(self.subpid, SIGKILL)
