@@ -34,6 +34,7 @@ then install via this command:
 | --tl "command"  | top-left     |
 | --tr "command"  | top-right    |
 | --bl "command"  | bottom-left  |
+| --br "command"  | bottom-right |
 
 Example
 
