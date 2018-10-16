@@ -60,24 +60,22 @@ class Service:
         else:
             kill(self.subpid, SIGKILL)
             self.subpid = 0
-        sleep(.5)
+        sleep(0.5)
     def run(self):
         self.subpid = 0
         try:
             print("daemon started")
             while 1:
+                sleep(0.25)
                 mouse = display.Display().screen().root.query_pointer()._data
-                try:
-                    if self.isTopLeft(mouse):
-                        self.executor(when_tl)
-                    elif self.isTopRight(mouse):
-                        self.executor(when_tr)
-                    elif self.isBottomLeft(mouse):
-                        self.executor(when_bl)
-                    elif self.isBottomRight(mouse):
-                        self.executor(when_br)
-                except:
-                    sleep(.25)
+                if self.isTopLeft(mouse):
+                    self.executor(when_tl)
+                elif self.isTopRight(mouse):
+                    self.executor(when_tr)
+                elif self.isBottomLeft(mouse):
+                    self.executor(when_bl)
+                elif self.isBottomRight(mouse):
+                    self.executor(when_br)
         except (KeyboardInterrupt, SystemExit):
             print("daemon stopped")
             exit()
