@@ -67,14 +67,17 @@ class Service:
             while 1:
                 sleep(0.01)
                 mouse = display.Display().screen().root.query_pointer()._data
-                if self.isTopLeft(mouse):
-                    self.executor(when_tl)
-                elif self.isTopRight(mouse):
-                    self.executor(when_tr)
-                elif self.isBottomLeft(mouse):
-                    self.executor(when_bl)
-                elif self.isBottomRight(mouse):
-                    self.executor(when_br)
+                try:
+                    if self.isTopLeft(mouse):
+                        self.executor(when_tl)
+                    elif self.isTopRight(mouse):
+                        self.executor(when_tr)
+                    elif self.isBottomLeft(mouse):
+                        self.executor(when_bl)
+                    elif self.isBottomRight(mouse):
+                        self.executor(when_br)
+                except NameError:
+                    pass
                 sleep(0.3)
         except (KeyboardInterrupt, SystemExit):
             print("daemon stopped")
