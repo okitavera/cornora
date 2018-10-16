@@ -46,11 +46,11 @@ except:
 
 class Service:
     def isTopLeft(self, data):
-        return data["root_x"] == 0 and data["root_y"] == 0
+        return data["root_x"] <= 1 and data["root_y"] <= 1
     def isTopRight(self, data):
-        return data["root_x"] == maxW and data["root_y"] == 0
+        return data["root_x"] == maxW and data["root_y"] <= 1
     def isBottomLeft(self, data):
-        return data["root_x"] == 0 and data["root_y"] == maxH
+        return data["root_x"] <= 1 and data["root_y"] == maxH
     def isBottomRight(self, data):
         return data["root_x"] == maxW and data["root_y"] == maxH
     def executor(self,process):
@@ -60,13 +60,12 @@ class Service:
         else:
             kill(self.subpid, SIGKILL)
             self.subpid = 0
-        sleep(0.5)
     def run(self):
         self.subpid = 0
         try:
             print("daemon started")
             while 1:
-                sleep(0.25)
+                sleep(0.01)
                 mouse = display.Display().screen().root.query_pointer()._data
                 if self.isTopLeft(mouse):
                     self.executor(when_tl)
@@ -76,6 +75,7 @@ class Service:
                     self.executor(when_bl)
                 elif self.isBottomRight(mouse):
                     self.executor(when_br)
+                sleep(0.3)
         except (KeyboardInterrupt, SystemExit):
             print("daemon stopped")
             exit()
