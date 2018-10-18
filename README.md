@@ -29,18 +29,18 @@ then install via this command:
 
 ## Usage
 
-| args            | conditions   |
-| --------------- | ------------ |
-| --tl "command"  | top-left     |
-| --tr "command"  | top-right    |
-| --bl "command"  | bottom-left  |
-| --br "command"  | bottom-right |
+| args           | conditions   |
+| -------------- | ------------ |
+| -tl "command"  | top-left     |
+| -tr "command"  | top-right    |
+| -bl "command"  | bottom-left  |
+| -br "command"  | bottom-right |
 
 Example
 
-      $ cornora --tl "skippy-xd"
+      $ cornora -tl "skippy-xd"
       # or with multi conditions
-      $ cornora --tl "skippy-xd" --tr "rofi -show run"      
+      $ cornora -tl "skippy-xd" -tr "rofi -show run"      
 
       
 ## License

@@ -1,19 +1,5 @@
 #!/usr/bin/python3
-"""
-Cornora
-Simple Hotcorner Launcher for X
-
-usage:
-
-   arguments          run a command when mouse touching :
-   ------------------------------------------------------
-   --tl "command"     top-left corner of the screen
-   --tr "command"     top-right
-   --bl "command"     bottom-left
-   --br "command"     bottom-right
-
-   -h  --help         show help docs
-"""
+import argparse
 from os import kill
 from time import sleep
 from Xlib import display
@@ -27,36 +13,25 @@ screen = display.Display().screen()
 maxW = screen.width_in_pixels-1
 maxH = screen.height_in_pixels-1
 
-Pass = True
-try:
-    opts, args = getopt(argv[1:], 'h', ['tl=', 'tr=', 'bl=', 'br=', 'help='])
-    for opt, arg in opts:
-        Pass = True
-        if opt == '--tl':
-            when_tl = arg
-        elif opt == '--tr':
-            when_tr = arg
-        elif opt == '--bl':
-            when_bl = arg
-        elif opt == '--br':
-            when_br = arg
-        else:
-            Pass = False
-except:
-    Pass = False
+parser = argparse.ArgumentParser()
+parser.add_argument("-tl", metavar='"cmd"', help="top-left command")
+parser.add_argument("-tr", metavar='"cmd"', help="top-right command")
+parser.add_argument("-bl", metavar='"cmd"', help="bottom-left command")
+parser.add_argument("-br", metavar='"cmd"', help="bottom-right command")
+when = parser.parse_args()
 
 class Service:
     def __init__(self):
         self.process = Process(target=self.mouseListener)
         self.process.daemon = True
     def isTopLeft(self, data):
-        return data["root_x"] <= 1 and data["root_y"] <= 1
+        return when.tl is not None and data["root_x"] <= 1 and data["root_y"] <= 1
     def isTopRight(self, data):
-        return data["root_x"] == maxW and data["root_y"] <= 1
+        return when.tr is not None and data["root_x"] == maxW and data["root_y"] <= 1
     def isBottomLeft(self, data):
-        return data["root_x"] <= 1 and data["root_y"] == maxH
+        return when.bl is not None and data["root_x"] <= 1 and data["root_y"] == maxH
     def isBottomRight(self, data):
-        return data["root_x"] == maxW and data["root_y"] == maxH
+        return when.br is not None and data["root_x"] == maxW and data["root_y"] == maxH
     def executor(self,process):
         if self.subpid == 0:
             out = Popen(process.split(), stdout=PIPE, stderr=PIPE)
@@ -71,17 +46,14 @@ class Service:
         try:
             while self.listening == True:
                 mouse = display.Display().screen().root.query_pointer()._data
-                try:
-                    if self.isTopLeft(mouse):
-                        self.executor(when_tl)
-                    elif self.isTopRight(mouse):
-                        self.executor(when_tr)
-                    elif self.isBottomLeft(mouse):
-                        self.executor(when_bl)
-                    elif self.isBottomRight(mouse):
-                        self.executor(when_br)
-                except NameError:
-                    pass
+                if self.isTopLeft(mouse):
+                    self.executor(when.tl)
+                elif self.isTopRight(mouse):
+                    self.executor(when.tr)
+                elif self.isBottomLeft(mouse):
+                    self.executor(when.bl)
+                elif self.isBottomRight(mouse):
+                    self.executor(when.br)
                 sleep(0.3)
         except (KeyboardInterrupt, SystemExit):
             self.stopService()
@@ -90,10 +62,4 @@ class Service:
         print("\rdaemon stopped")
 
 def main():
-    if Pass:
-        Service().process.run()
-    else:
-        print(__doc__)
-
-if __name__ == "__main__":
-    main()
+    Service().process.run()
