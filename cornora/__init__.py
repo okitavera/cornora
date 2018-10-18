@@ -21,6 +21,7 @@ from getopt import getopt
 from signal import SIGKILL
 from sys import argv, exit
 from subprocess import PIPE, Popen
+from multiprocessing import Process
 
 screen = display.Display().screen()
 maxW = screen.width_in_pixels-1
@@ -45,6 +46,9 @@ except:
     Pass = False
 
 class Service:
+    def __init__(self):
+        self.process = Process(target=self.mouseListener)
+        self.process.daemon = True
     def isTopLeft(self, data):
         return data["root_x"] <= 1 and data["root_y"] <= 1
     def isTopRight(self, data):
@@ -60,12 +64,12 @@ class Service:
         else:
             kill(self.subpid, SIGKILL)
             self.subpid = 0
-    def run(self):
+    def mouseListener(self):
         self.subpid = 0
+        self.listening = True
+        print("daemon started")
         try:
-            print("daemon started")
-            while 1:
-                sleep(0.01)
+            while self.listening == True:
                 mouse = display.Display().screen().root.query_pointer()._data
                 try:
                     if self.isTopLeft(mouse):
@@ -80,12 +84,14 @@ class Service:
                     pass
                 sleep(0.3)
         except (KeyboardInterrupt, SystemExit):
-            print("daemon stopped")
-            exit()
+            self.stopService()
+    def stopService(self):
+        self.listening = False
+        print("\rdaemon stopped")
 
 def main():
     if Pass:
-        Service().run()
+        Service().process.run()
     else:
         print(__doc__)
 
