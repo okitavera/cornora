@@ -15,11 +15,12 @@
 2. clone this repo into your local storage:
 
     $ git clone https://github.com/yuune/Cornora.git
+    
     $ cd Cornora
 
-3. then put the cornora script into your bin folder, example :
+3. install it :
 
-    $ sudo cp cornora /usr/local/bin/
+    $ sudo make install
 
 
 ## Usage
