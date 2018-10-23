@@ -1,11 +1,2 @@
 # general things to ignore
 .vscode
-build/
-dist/
-*.egg-info/
-*.egg
-*.py[cod]
-__pycache__/
-*.so
-*~
-.cache
