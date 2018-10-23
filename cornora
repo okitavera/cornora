@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+#:Cornora
+#:Usage: cornora [OPTION]
+#:
+#:  option:   run command when mouse reach to the edge of screen:
+#:
+#:  -tl cmd   top-left
+#:  -tr cmd   top-right
+#:  -bl cmd   bottom-left
+#:  -br cmd   bottom-right
+#:
+# same as py version before, but faster
+
+eval $(xdotool getdisplaygeometry --shell)
+G=2; H=$((WIDTH-g)); H=$((HEIGHT-g)); 
+
+usage() {
+    grep "^#:" $0 | sed 's/#://'
+    exit
+}
+
+delay() {
+    local IFS
+    [[ -n "${_de:-}" ]] || exec {_de}<> <(:)
+    read ${1:+-t "$1"} -u $_de || :
+}
+
+invoke() {
+    id="$(pidof $1)"
+    [[ -z "$id" ]] && (eval $1 2&>/dev/null &) || (kill -9 $id 2&>/dev/null)
+    delay 0.05
+}
+
+while getopts "tbr:l:h" A; do
+    [[ -z $A || "$A" == "h" ]] && usage
+    [[ -z $OPTARG ]] && arg+="$A" || arg+="$A=\"$OPTARG\"\n"
+done
+
+while :;do
+    eval $(printf $arg); eval $(xdotool getmouselocation --shell)
+    [[ "$X" -lt "$G" && "$Y" -lt "$G" ]] && invoke "$tl"
+    [[ "$X" -gt "$W" && "$Y" -lt "$G" ]] && invoke "$tr"
+    [[ "$X" -lt "$G" && "$Y" -gt "$H" ]] && invoke "$bl"
+    [[ "$X" -gt "$W" && "$Y" -gt "$H" ]] && invoke "$br"
+    delay 0.2
+done

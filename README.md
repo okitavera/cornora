@@ -3,28 +3,23 @@
 	<p>Simple Hotcorner Launcher for X</p>
 </div>
 
-
 ## Dependencies
 
-- python (version 3)
-- python-xlib
-- python-setuptools (for installation)
+- `bash`
+- `xdotool`
+- `sed`
 
 ## Installation
 
-Install the dependencies first:
-
-    $ sudo pacman -S python-setuptools python-xlib
-
-clone this repo into your local storage:
+1. Make sure you're already have those dependencies installed
+2. clone this repo into your local storage:
 
     $ git clone https://github.com/yuune/Cornora.git
     $ cd Cornora
-    $ chmod +x setup.py
 
-then install via this command:
+3. then put the cornora script into your bin folder, example :
 
-    $ sudo ./setup.py install
+    $ sudo cp cornora /usr/local/bin/
 
 
 ## Usage
