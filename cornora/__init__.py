@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 import argparse
-from os import kill
+from os import kill, nice
 from time import sleep
 from Xlib import display
 from getopt import getopt
@@ -24,14 +24,6 @@ class Service:
     def __init__(self):
         self.process = Process(target=self.mouseListener)
         self.process.daemon = True
-    def isTopLeft(self, data):
-        return when.tl is not None and data["root_x"] <= 1 and data["root_y"] <= 1
-    def isTopRight(self, data):
-        return when.tr is not None and data["root_x"] == maxW and data["root_y"] <= 1
-    def isBottomLeft(self, data):
-        return when.bl is not None and data["root_x"] <= 1 and data["root_y"] == maxH
-    def isBottomRight(self, data):
-        return when.br is not None and data["root_x"] == maxW and data["root_y"] == maxH
     def executor(self,process):
         if self.subpid == 0:
             out = Popen(process.split(), stdout=PIPE, stderr=PIPE)
@@ -39,21 +31,23 @@ class Service:
         else:
             kill(self.subpid, SIGKILL)
             self.subpid = 0
+    def checkMouse(self):
+        data = display.Display().screen().root.query_pointer()._data
+        if when.tl is not None and data["root_x"] <= 1 and data["root_y"] <= 1:
+            self.executor(when.tl)
+        elif when.tr is not None and data["root_x"] == maxW and data["root_y"] <= 1:
+            self.executor(when.tr)
+        elif when.bl is not None and data["root_x"] <= 1 and data["root_y"] == maxH:
+            self.executor(when.bl)
+        elif when.br is not None and data["root_x"] == maxW and data["root_y"] == maxH:
+            self.executor(when.br)
     def mouseListener(self):
         self.subpid = 0
         self.listening = True
         print("daemon started")
         try:
             while self.listening == True:
-                mouse = display.Display().screen().root.query_pointer()._data
-                if self.isTopLeft(mouse):
-                    self.executor(when.tl)
-                elif self.isTopRight(mouse):
-                    self.executor(when.tr)
-                elif self.isBottomLeft(mouse):
-                    self.executor(when.bl)
-                elif self.isBottomRight(mouse):
-                    self.executor(when.br)
+                self.checkMouse()
                 sleep(0.3)
         except (KeyboardInterrupt, SystemExit):
             self.stopService()
@@ -62,4 +56,5 @@ class Service:
         print("\rdaemon stopped")
 
 def main():
+    nice(19)
     Service().process.run()
