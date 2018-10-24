@@ -5,7 +5,7 @@ endif
 .PHONY: install
 install:
 	install -d $(DESTDIR)$(PREFIX)/bin
-	install -m 755 cornora.py $(DESTDIR)$(PREFIX)/bin/cornora
+	install -m 755 cornora $(DESTDIR)$(PREFIX)/bin/cornora
 
 .PHONY: uninstall
 uninstall:
