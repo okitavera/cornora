@@ -12,7 +12,8 @@
 # same as py version before, but faster
 
 eval $(xdotool getdisplaygeometry --shell)
-G=2; H=$((WIDTH-g)); H=$((HEIGHT-g)); 
+G=2; W=$((WIDTH-G)); H=$((HEIGHT-G)); L=/tmp/cornora; DB=$L/db.lck;
+
 
 usage() {
     grep "^#:" $0 | sed 's/#://'
@@ -31,16 +32,24 @@ invoke() {
     delay 0.05
 }
 
-while getopts "tbr:l:h" A; do
-    [[ -z $A || "$A" == "h" ]] && usage
-    [[ -z $OPTARG ]] && arg+="$A" || arg+="$A=\"$OPTARG\"\n"
-done
+if (mkdir $L) 2>/dev/null; then
+    printf "%s\n" $$ >$DB
+    trap 'rm -rf "$L"; exit $?' INT TERM EXIT
+    while getopts "tbr:l:h" A; do
+        [[ -z $A || "$A" == "h" ]] && usage
+        [[ -z $OPTARG ]] && arg+="$A" || arg+="$A=\"$OPTARG\"\n"
+    done
 
-while :;do
-    eval $(printf $arg); eval $(xdotool getmouselocation --shell)
-    [[ "$X" -lt "$G" && "$Y" -lt "$G" ]] && invoke "$tl"
-    [[ "$X" -gt "$W" && "$Y" -lt "$G" ]] && invoke "$tr"
-    [[ "$X" -lt "$G" && "$Y" -gt "$H" ]] && invoke "$bl"
-    [[ "$X" -gt "$W" && "$Y" -gt "$H" ]] && invoke "$br"
-    delay 0.2
-done
+    while :;do
+        eval $(printf $arg); eval $(xdotool getmouselocation --shell)
+        [[ "$X" -lt "$G" && "$Y" -lt "$G" ]] && invoke "$tl"
+        [[ "$X" -gt "$W" && "$Y" -lt "$G" ]] && invoke "$tr"
+        [[ "$X" -lt "$G" && "$Y" -gt "$H" ]] && invoke "$bl"
+        [[ "$X" -gt "$W" && "$Y" -gt "$H" ]] && invoke "$br"
+        delay 0.2
+    done
+    rm -rf $L
+    trap - INT TERM EXIT
+else    
+    printf "Lock Exists: Cornora is running at PID $(cat $DB). run kill -9 $(cat $DB) to close it.\n"
+fi
