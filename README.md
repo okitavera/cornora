@@ -7,7 +7,6 @@
 
 - `bash`
 - `xdotool`
-- `sed`
 
 ## Installation
 

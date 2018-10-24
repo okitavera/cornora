@@ -15,7 +15,7 @@ eval $(xdotool getdisplaygeometry --shell)
 G=2; W=$((WIDTH-G)); H=$((HEIGHT-G)); L=/tmp/cornora; DB=$L/db.lck;
 
 usage() {
-    grep "^#:" $0 | sed 's/#://'
+    grep "^#:" $0 | while read DOC; do printf '%s\n' "${DOC###:}"; done
     exit
 }
 
@@ -31,7 +31,7 @@ invoke() {
     delay 0.05
 }
 
-[[ -f "$DB" && -z $(cat $DB | xargs pidof) ]] && rm -rf $L
+[[ -f "$DB" && -z $(cat $DB | while read PID; do pidof $PID; done ) ]] && rm -rf $L
 if (mkdir $L) 2>/dev/null; then
     printf "%s\n" $$ >$DB
     trap 'rm -rf "$L"; exit $?' INT TERM EXIT
