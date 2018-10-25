@@ -12,7 +12,7 @@
 # same as py version before, but faster
 
 eval $(xdotool getdisplaygeometry --shell)
-G=2; W=$((WIDTH-G)); H=$((HEIGHT-G)); L=/tmp/cornora; DB=$L/db.lck;
+G=2;MR=4 W=$((WIDTH-G)); H=$((HEIGHT-G)); L=/tmp/cornora; DB=$L/db.lck;
 
 usage() {
     grep "^#:" $0 | while read DOC; do printf '%s\n' "${DOC###:}"; done
@@ -28,7 +28,8 @@ delay() {
 invoke() {
     id="$(pidof $1)"
     [[ -z "$id" ]] && (eval $1 2&>/dev/null &) || (kill -9 $id 2&>/dev/null)
-    delay 0.05
+    xdotool mousemove_relative $2 $3
+    delay 0.1
 }
 
 [[ -f "$DB" && -z $(cat $DB | while read PID; do pidof $PID; done ) ]] && rm -rf $L
@@ -42,10 +43,10 @@ if (mkdir $L) 2>/dev/null; then
 
     while :;do
         eval $(printf $arg); eval $(xdotool getmouselocation --shell)
-        [[ "$X" -lt "$G" && "$Y" -lt "$G" ]] && invoke "$tl"
-        [[ "$X" -gt "$W" && "$Y" -lt "$G" ]] && invoke "$tr"
-        [[ "$X" -lt "$G" && "$Y" -gt "$H" ]] && invoke "$bl"
-        [[ "$X" -gt "$W" && "$Y" -gt "$H" ]] && invoke "$br"
+        [[ "$X" -lt "$G" && "$Y" -lt "$G" ]] && invoke "$tl" $((X+MR)) $((Y+MR))
+        [[ "$X" -gt "$W" && "$Y" -lt "$G" ]] && invoke "$tr" $((X-MR)) $((Y+MR))
+        [[ "$X" -lt "$G" && "$Y" -gt "$H" ]] && invoke "$bl" $((X+MR)) $((Y-MR))
+        [[ "$X" -gt "$W" && "$Y" -gt "$H" ]] && invoke "$br" $((X-MR)) $((Y-MR))
         delay 0.2
     done
     rm -rf $L
