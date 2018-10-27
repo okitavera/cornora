@@ -1,13 +1,14 @@
 #!/usr/bin/env bash
-#:Cornora
-#:Usage: cornora [OPTION]
+#:Usage: cornora [-tl cmd] [-tr cmd] [-bl cmd] [-br cmd] [-v]
 #:
-#:  option:   run command when mouse reach to the edge of screen:
+#:  cmd:   run the command when mouse reach to the edge of screen:
 #:
 #:  -tl cmd   top-left
 #:  -tr cmd   top-right
 #:  -bl cmd   bottom-left
 #:  -br cmd   bottom-right
+#:  -h        show the help
+#:  -v        verbose output
 #:
 # same as py version before, but faster
 

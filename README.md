@@ -12,15 +12,14 @@
 
 1. Make sure you're already have those dependencies installed
 2. clone this repo into your local storage:
-
-    $ git clone https://github.com/yuune/Cornora.git
-    
-    $ cd Cornora
-
+```
+$ git clone https://github.com/yuune/Cornora.git
+$ cd Cornora
+```
 3. install it :
-
-    $ sudo make install
-
+```
+$ sudo make install
+```
 
 ## Usage
 
@@ -30,13 +29,14 @@
 | -tr "command"  | top-right    |
 | -bl "command"  | bottom-left  |
 | -br "command"  | bottom-right |
+| -v             | verbose mode |
 
 Example
-
-      $ cornora -tl "skippy-xd"
-      # or with multi conditions
-      $ cornora -tl "skippy-xd" -tr "rofi -show run"      
-
+```
+$ cornora -tl "skippy-xd"
+# or with multi conditions
+$ cornora -tl "skippy-xd" -tr "rofi -show run"      
+```
       
 ## License
 
