@@ -13,7 +13,7 @@
 # same as py version before, but faster
 
 eval $(xdotool getdisplaygeometry --shell)
-G=2;MR=4 W=$((WIDTH-G)); H=$((HEIGHT-G)); L=/tmp/cornora; DB=$L/db.lck;
+G=2;MR=4 W=$((WIDTH-G)); H=$((HEIGHT-G)); DB=/tmp/cornora.lck;
 
 usage() {
     grep "^#:" $0 | while read DOC; do printf '%s\n' "${DOC###:}"; done
@@ -42,7 +42,7 @@ delay() {
 
 invoke() {
     proc=$(IFS=" "; set -- $1; echo $1)
-    id="$(pidof "$proc")"
+    id="$(pidof -x "$proc")"
     if [[ -n "$verbose" ]]; then
         [[ -z "$id" ]] && (eval "$1" &) || (kill -9 $id &)
     else
@@ -52,10 +52,10 @@ invoke() {
     delay 0.1
 }
 
-[[ -f "$DB" && -z $(cat $DB | while read PID; do pidof $PID; done ) ]] && rm -rf $L
-if (mkdir $L) 2>/dev/null; then
+[[ -f "$DB" && -z "$(cat $DB | xargs ps -p)" ]] && rm -rf $DB
+if [[ ! -f "$DB" ]]; then
     printf "%s\n" $$ >$DB
-    trap 'rm -rf "$L"; exit $?' INT TERM EXIT
+    trap 'rm -rf "$DB"; exit $?' INT TERM EXIT
     [[ -z "$@" ]] && usage || options "$@"
     while :;do
         eval $(xdotool getmouselocation --shell)
@@ -65,8 +65,9 @@ if (mkdir $L) 2>/dev/null; then
         [[ -n "$br" && "$X" -gt "$W" && "$Y" -gt "$H" ]] && invoke "$br" $((X-MR)) $((Y-MR))
         delay 0.2
     done
-    rm -rf $L
+    rm -rf $DB
     trap - INT TERM EXIT
 else    
-    printf "Lock Exists: Cornora is running at PID $(cat $DB). run kill -9 $(cat $DB) to close it.\n"
+    printf "Lock Exists: Cornora is running at PID $(cat $DB). run \"pkill -f $(basename $0)\" to close it.\n"
+    exit 1
 fi
