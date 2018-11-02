@@ -1,7 +1,5 @@
-<div align="center">
-	<h1>Cornora</h1>
-	<p>Simple Hotcorner Launcher for X</p>
-</div>
+# Cornora
+Simple Hot Corner Launcher for X11
 
 ## Dependencies
 
@@ -9,6 +7,14 @@
 - `xdotool`
 
 ## Installation
+
+#### Arch Linux
+
+You can install it from your favourite aur helper
+
+[cornora-git at AUR](https://aur.archlinux.org/packages/cornora-git/)
+
+#### Manual
 
 1. Make sure you're already have those dependencies installed
 2. clone this repo into your local storage:
