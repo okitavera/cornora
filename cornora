@@ -27,8 +27,8 @@ options() {
             "-tr") tr="$2" ;;
             "-bl") bl="$2" ;;
             "-br") br="$2" ;;
-            "-h") usage ;;
             "-v") verbose=1 ;;
+            ""|"-h"|"--help") usage ;;
         esac
     shift
     done
