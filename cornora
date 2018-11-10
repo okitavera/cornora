@@ -3,12 +3,14 @@
 #:
 #:  cmd:   run the command when mouse reach to the edge of screen:
 #:
-#:  -tl cmd   top-left
-#:  -tr cmd   top-right
-#:  -bl cmd   bottom-left
-#:  -br cmd   bottom-right
-#:  -h        show the help
-#:  -v        verbose output
+#:  -tl cmd                          top-left
+#:  -tr cmd                          top-right
+#:  -bl cmd                          bottom-left
+#:  -br cmd                          bottom-right
+#:  -isf, --ignore-steam-fullscreen  disable command when steam game
+#:                                   is active in fullscreen.
+#:  -v                               verbose output
+#:  -h                               show the help
 #:
 # same as py version before, but faster
 
@@ -27,6 +29,7 @@ options() {
             "-tr") tr="$2" ;;
             "-bl") bl="$2" ;;
             "-br") br="$2" ;;
+            "-isf"|"--ignore-steam-fullscreen") desteam=1 ;;
             "-v") verbose=1 ;;
             ""|"-h"|"--help") usage ;;
         esac
@@ -59,10 +62,15 @@ if [[ ! -f "$DB" ]]; then
     [[ -z "$@" ]] && usage || options "$@"
     while :;do
         eval $(xdotool getmouselocation --shell)
-        [[ -n "$tl" && "$X" -lt "$G" && "$Y" -lt "$G" ]] && invoke "$tl" $((X+MR)) $((Y+MR))
-        [[ -n "$tr" && "$X" -gt "$W" && "$Y" -lt "$G" ]] && invoke "$tr" $((X-MR)) $((Y+MR))
-        [[ -n "$bl" && "$X" -lt "$G" && "$Y" -gt "$H" ]] && invoke "$bl" $((X+MR)) $((Y-MR))
-        [[ -n "$br" && "$X" -gt "$W" && "$Y" -gt "$H" ]] && invoke "$br" $((X-MR)) $((Y-MR))
+        state="0"
+        if [[ -n "$desteam" ]]; then
+            [[ -n "$(xdotool getactivewindow 2>/dev/null | xargs xprop -id 2>/dev/null | grep E_FULLS)" ]] && state="1"
+            [[ -n "$(xdotool getactivewindow 2>/dev/null | xargs xprop -id 2>/dev/null | grep EAM_G)" ]] || state="0"
+        fi
+        [[ "$state" == "0" && -n "$tl" && "$X" -lt "$G" && "$Y" -lt "$G" ]] && invoke "$tl" $((X+MR)) $((Y+MR))
+        [[ "$state" == "0" && -n "$tr" && "$X" -gt "$W" && "$Y" -lt "$G" ]] && invoke "$tr" $((X-MR)) $((Y+MR))
+        [[ "$state" == "0" && -n "$bl" && "$X" -lt "$G" && "$Y" -gt "$H" ]] && invoke "$bl" $((X+MR)) $((Y-MR))
+        [[ "$state" == "0" && -n "$br" && "$X" -gt "$W" && "$Y" -gt "$H" ]] && invoke "$br" $((X-MR)) $((Y-MR))
         delay 0.2
     done
     rm -rf $DB

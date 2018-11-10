@@ -5,6 +5,7 @@ Simple Hot Corner Launcher for X11
 
 - `bash`
 - `xdotool`
+- `xprop` from `xorg-xprop`
 
 ## Installation
 
@@ -29,13 +30,15 @@ $ sudo make install
 
 ## Usage
 
-| args           | conditions   |
-| -------------- | ------------ |
-| -tl "command"  | top-left     |
-| -tr "command"  | top-right    |
-| -bl "command"  | bottom-left  |
-| -br "command"  | bottom-right |
-| -v             | verbose mode |
+| args                            | conditions                                              |
+| ------------------------------- | ------------------------------------------------------- |
+| -tl "command"                   | top-left                                                |
+| -tr "command"                   | top-right                                               |
+| -bl "command"                   | bottom-left                                             |
+| -br "command"                   | bottom-right                                            |
+| -isf, --ignore-steam-fullscreen | disable command when steam game is active in fullscreen |
+| -v                              | verbose mode                                            |
+| -h                              | show the help                                           |
 
 Example
 ```
