@@ -64,11 +64,11 @@ trap handler SIGINT SIGTERM EXIT
 
 [[ -f "$DB" && -z "$(cat $DB | xargs ps -p)" ]] && rm -rf $DB
 if [[ ! -f "$DB" ]]; then
-    printf "%s\n" $$ >$DB
     [[ -z "$@" ]] && usage || options "$@"
     while :;do
+        [[ ! -f "$DB" ]] && printf "%s\n" $$ >$DB
         eval $(xdotool getmouselocation --shell)
-        if [[ -n "$iof" -n "$(xdotool getactivewindow 2>/dev/null | xargs xprop -id 2>/dev/null | grep E_FULLS)" ]]; then
+        if [[ -n "$iof" && -n "$(xdotool getactivewindow 2>/dev/null | xargs xprop -id 2>/dev/null | grep E_FULLS)" ]]; then
             delay 0.2
         else
             [[ -n "$tl" && "$X" -lt "$G" && "$Y" -lt "$G" ]] && invoke "$tl" $((X+MR)) $((Y+MR))
@@ -78,6 +78,7 @@ if [[ ! -f "$DB" ]]; then
         fi
         delay 0.2
     done
+    exit 0
 else    
     printf "Lock Exists: Cornora is running at PID $(cat $DB). run \"pkill -f $(basename $0)\" to close it.\n"
     exit 1
