@@ -30,15 +30,15 @@ $ sudo make install
 
 ## Usage
 
-| args                            | conditions                                              |
-| ------------------------------- | ------------------------------------------------------- |
-| -tl "command"                   | top-left                                                |
-| -tr "command"                   | top-right                                               |
-| -bl "command"                   | bottom-left                                             |
-| -br "command"                   | bottom-right                                            |
-| -isf, --ignore-steam-fullscreen | disable command when steam game is active in fullscreen |
-| -v                              | verbose mode                                            |
-| -h                              | show the help                                           |
+| args                          | conditions                                       |
+| ----------------------------- | ------------------------------------------------ |
+| -tl "command"                 | top-left                                         |
+| -tr "command"                 | top-right                                        |
+| -bl "command"                 | bottom-left                                      |
+| -br "command"                 | bottom-right                                     |
+| -iof, --ignore-on-fullscreen  | disable command when active window is fullscreen |
+| -v                            | verbose mode                                     |
+| -h                            | show the help                                    |
 
 Example
 ```
