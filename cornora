@@ -9,6 +9,7 @@
 #:  -br cmd                          bottom-right
 #:  -iof, --ignore-on-fullscreen     disable command when active window
 #:                                   is fullscreen.
+#:  --stop                           force stop cornora if it's running
 #:  -v                               verbose output
 #:  -h                               show the help
 #:
@@ -30,6 +31,7 @@ options() {
             "-bl") bl="$2" ;;
             "-br") br="$2" ;;
             "-iof"|"--ignore-on-fullscreen") iof=1 ;;
+            "--stop") kill -9 $(cat $DB) && exit ;;
             "-v") verbose=1 ;;
             ""|"-h"|"--help") usage ;;
         esac
@@ -55,21 +57,22 @@ invoke() {
     delay 0.1
 }
 
-handler() {
+quithandler() {
     rm -f $DB
-    exit
+    exit $?
 }
 
-trap handler SIGINT SIGTERM EXIT
+trap quithandler SIGINT SIGTERM EXIT
 
 [[ -f "$DB" && -z "$(cat $DB | xargs ps -p)" ]] && rm -rf $DB
+[[ -z "$@" ]] && usage || options "$@"
+
 if [[ ! -f "$DB" ]]; then
-    [[ -z "$@" ]] && usage || options "$@"
     while :;do
         [[ ! -f "$DB" ]] && printf "%s\n" $$ >$DB
         eval $(xdotool getmouselocation --shell)
         if [[ -n "$iof" && -n "$(xdotool getactivewindow 2>/dev/null | xargs xprop -id 2>/dev/null | grep E_FULLS)" ]]; then
-            delay 0.2
+            delay 0.8
         else
             [[ -n "$tl" && "$X" -lt "$G" && "$Y" -lt "$G" ]] && invoke "$tl" $((X+MR)) $((Y+MR))
             [[ -n "$tr" && "$X" -gt "$W" && "$Y" -lt "$G" ]] && invoke "$tr" $((X-MR)) $((Y+MR))
@@ -80,6 +83,6 @@ if [[ ! -f "$DB" ]]; then
     done
     exit 0
 else    
-    printf "Lock Exists: Cornora is running at PID $(cat $DB). run \"pkill -f $(basename $0)\" to close it.\n"
+    printf "Lock Exists: Cornora is running at PID $(cat $DB). run \"cornora --stop\" to close it.\n"
     exit 1
 fi

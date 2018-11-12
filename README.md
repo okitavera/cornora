@@ -37,6 +37,7 @@ $ sudo make install
 | -bl "command"                 | bottom-left                                      |
 | -br "command"                 | bottom-right                                     |
 | -iof, --ignore-on-fullscreen  | disable command when active window is fullscreen |
+| --stop                        | force stop cornora if it's running               |
 | -v                            | verbose mode                                     |
 | -h                            | show the help                                    |
 
